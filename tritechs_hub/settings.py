@@ -86,3 +86,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
+
+# Auto-create superuser for Render deployment
+import os
+if os.environ.get('RENDER'):
+    try:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser('admin', 'admin@tritech.com', 'admin123')
+            print('✅ Superuser created successfully!')
+        else:
+            print('✅ Superuser already exists')
+    except Exception as e:
+        print(f'Superuser creation error: {e}')
