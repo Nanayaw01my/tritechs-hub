@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register Customer - Tritech's Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+        }
+        .back-btn, .logout-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .section-title {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 20px 0 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏪 Register New Customer</h1>
+        <div>
+            <a href="/staff/" class="back-btn">← Back to Dashboard</a>
+            <a href="/logout/" class="logout-btn">🚪 Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-card">
+            <h2>Customer Registration Form</h2>
+            
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="section-title">📋 Personal Information</div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="full_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Occupation *</label>
+                        <input type="text" name="occupation" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Monthly Income (GHS) *</label>
+                        <input type="number" name="income_amount" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="section-title">📍 Location Information</div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Region *</label>
+                        <select name="region" required>
+                            <option value="">Select Region</option>
+                            <option value="GAR">Greater Accra Region</option>
+                            <option value="AR">Ashanti Region</option>
+                            <option value="CR">Central Region</option>
+                            <option value="ER">Eastern Region</option>
+                            <option value="VR">Volta Region</option>
+                            <option value="WR">Western Region</option>
+                            <option value="NR">Northern Region</option>
+                            <option value="UER">Upper East Region</option>
+                            <option value="UWR">Upper West Region</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>District *</label>
+                        <input type="text" name="district" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Location/Town *</label>
+                        <input type="text" name="location" required>
+                    </div>
+                </div>
+
+                <div class="section-title">👨‍👩‍👧 Guarantor Information</div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Guarantor Full Name *</label>
+                        <input type="text" name="guarantor_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Guarantor Phone *</label>
+                        <input type="tel" name="guarantor_phone" required>
+                    </div>
+                </div>
+
+                <button type="submit">✅ Register Customer</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

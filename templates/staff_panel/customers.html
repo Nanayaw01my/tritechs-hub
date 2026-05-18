@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customers - Tritech's Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-btn, .logout-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .customer-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .customer-info h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .customer-info p {
+            color: #666;
+            margin: 5px 0;
+        }
+        .plan-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏪 All Customers</h1>
+        <div>
+            <a href="/staff/" class="back-btn">← Dashboard</a>
+            <a href="/staff/register-customer/" class="back-btn">+ New Customer</a>
+            <a href="/logout/" class="logout-btn">🚪 Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Customer List</h2>
+        
+        {% for customer in customers %}
+        <div class="customer-card">
+            <div class="customer-info">
+                <h3>{{ customer.full_name }}</h3>
+                <p>📞 {{ customer.phone }} | ✉️ {{ customer.email }}</p>
+                <p>📍 {{ customer.location }}, {{ customer.get_region_display }}</p>
+                <p>💰 Monthly Income: GHS {{ customer.income_amount }}</p>
+            </div>
+            <a href="/staff/create-plan/{{ customer.id }}/" class="plan-btn">📱 Create Plan</a>
+        </div>
+        {% empty %}
+        <p style="text-align: center; padding: 50px;">No customers yet. <a href="/staff/register-customer/">Register your first customer</a></p>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Installment Plan - Tritech's Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-btn, .logout-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .customer-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .calculation {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .price {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏪 Create Installment Plan</h1>
+        <div>
+            <a href="/staff/customers/" class="back-btn">← Back</a>
+            <a href="/logout/" class="logout-btn">🚪 Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-card">
+            <h2>New Installment Plan</h2>
+            
+            <div class="customer-info">
+                <strong>Customer:</strong> {{ customer.full_name }}<br>
+                <strong>Phone:</strong> {{ customer.phone }}<br>
+                <strong>Monthly Income:</strong> GHS {{ customer.income_amount }}
+            </div>
+
+            <form method="post" oninput="calculateInstallment()">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>Select iPhone Model *</label>
+                    <select name="device_model" id="device_model" required onchange="updatePrice()">
+                        <option value="">Choose iPhone</option>
+                        {% for model, price in iphone_prices.items %}
+                        <option value="{{ model }}" data-price="{{ price }}">
+                            {{ model }} - GHS {{ price|floatformat:0 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Price (GHS)</label>
+                    <input type="text" id="total_price" readonly style="background:#f5f5f5">
+                </div>
+
+                <div class="form-group">
+                    <label>Down Payment (GHS) *</label>
+                    <input type="number" name="down_payment" id="down_payment" step="0.01" required oninput="calculateInstallment()">
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Frequency *</label>
+                    <select name="frequency" id="frequency" required onchange="calculateInstallment()">
+                        <option value="">Select Frequency</option>
+                        <option value="daily">Daily (180 payments over 6 months)</option>
+                        <option value="weekly">Weekly (26 payments over 6 months)</option>
+                        <option value="monthly">Monthly (6 payments over 6 months)</option>
+                    </select>
+                </div>
+
+                <div class="calculation" id="calculation">
+                    <strong>📊 Payment Calculation:</strong><br>
+                    Remaining Balance: GHS <span id="remaining">0.00</span><br>
+                    Installment Amount: GHS <span id="installment">0.00</span><br>
+                    Total Payments: <span id="total_payments">0</span>
+                </div>
+
+                <button type="submit">✅ Create Installment Plan</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const iphonePrices = {
+            {% for model, price in iphone_prices.items %}
+            "{{ model }}": {{ price }},
+            {% endfor %}
+        };
+
+        function updatePrice() {
+            const select = document.getElementById('device_model');
+            const selectedOption = select.options[select.selectedIndex];
+            const price = selectedOption.getAttribute('data-price');
+            document.getElementById('total_price').value = price ? GHS(price) : '';
+            calculateInstallment();
+        }
+
+        function GHS(amount) {
+            return 'GHS ' + parseFloat(amount).toFixed(2);
+        }
+
+        function calculateInstallment() {
+            const select = document.getElementById('device_model');
+            const selectedOption = select.options[select.selectedIndex];
+            const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            const downPayment = parseFloat(document.getElementById('down_payment').value) || 0;
+            const frequency = document.getElementById('frequency').value;
+            
+            const remaining = price - downPayment;
+            let installment = 0;
+            let totalPayments = 0;
+            
+            if (frequency === 'daily') {
+                totalPayments = 180;
+                installment = remaining / 180;
+            } else if (frequency === 'weekly') {
+                totalPayments = 26;
+                installment = remaining / 26;
+            } else if (frequency === 'monthly') {
+                totalPayments = 6;
+                installment = remaining / 6;
+            }
+            
+            document.getElementById('remaining').innerText = remaining.toFixed(2);
+            document.getElementById('installment').innerText = installment.toFixed(2);
+            document.getElementById('total_payments').innerText = totalPayments;
+        }
+    </script>
+</body>
+</html>

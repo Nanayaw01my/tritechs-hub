@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Make Payment - Tritech's Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-btn, .logout-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        .payment-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .amount {
+            font-size: 64px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .due-date {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .method-btn {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .method-btn:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        .pay-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💰 Make Payment</h1>
+        <div>
+            <a href="/customer/" class="back-btn">← Back</a>
+            <a href="/logout/" class="logout-btn">🚪 Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="payment-card">
+            <h2>Installment Payment</h2>
+            <div class="amount">GHS {{ amount|floatformat:2 }}</div>
+            <div class="due-date">Due Date: {{ due_date }}</div>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <h3>Select Payment Method</h3>
+                <div class="payment-methods">
+                    <button type="submit" name="payment_method" value="mobile_money" class="method-btn">
+                        📱 Mobile Money (MTN, Vodafone, AirtelTigo)
+                    </button>
+                    <button type="submit" name="payment_method" value="card" class="method-btn">
+                        💳 Credit / Debit Card
+                    </button>
+                    <button type="submit" name="payment_method" value="bank_transfer" class="method-btn">
+                        🏦 Bank Transfer
+                    </button>
+                </div>
+
+                <button type="submit" class="pay-btn">✅ Confirm Payment</button>
+            </form>
+
+            <div class="info">
+                ℹ️ After successful payment, your device will be unlocked within 5 minutes.
+                You will receive an SMS confirmation.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
